@@ -1,12 +1,6 @@
 ---
 - hosts: all
   become: yes
-  tasks:
-  - name: update
-    yum:
-      name: "*"
-      state: latest
-  - name: fill template with ip
-    template:
-      src: file.j2
-      dest: /tmp/filled_file.txt
+
+  roles:
+  - common
