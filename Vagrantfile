@@ -23,14 +23,21 @@ Vagrant.configure("2") do |config|
           # Disable default limit to connect to all the machines
           ansible.limit = "all"
           ansible.compatibility_mode = "2.0"
+
+          # set groups for server and clients
           ansible.groups = {
             "server" => ["machine1"],
-            "client"  => ["machine2"]
+            "clients" => [],
           }
-          ansible.host_vars = {
-            "machine1" => {"intip" => "192.168.77.21"},
-            "machine2" => {"intip" => "192.168.77.22"}
-          }
+          (2..N).each do |i|
+            ansible.groups["clients"].append("machine#{i}")
+          end
+
+          # set internal ip address as inventory variable
+          ansible.host_vars = {}
+          (1..N).each do |i|
+            ansible.host_vars["machine#{i}"] = {"intip" => "192.168.77.#{20+i}"}
+          end
           ansible.playbook = "provisioning/playbook.yml"
         end
       end
@@ -47,9 +54,5 @@ Vagrant.configure("2") do |config|
   # within the machine from a port on the host machine and only allow access
   # via 127.0.0.1 to disable public access
   # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
-  # Create a private network, which allows host-only access to the machine
-  # using a specific IP.
-  # config.vm.network "private_network", ip: "192.168.33.10"
 
 end
