@@ -1,0 +1,15 @@
+global:
+  external_labels:
+    monitor: codelab-monitor
+  scrape_interval: 15s
+scrape_configs:
+- job_name: prometheus
+  scrape_interval: 5s
+  static_configs:
+  - targets:
+{% for host in groups['servers'] %}
+    - {{ host }}:9100
+{% endfor %}
+{% for host in groups['clients'] %}
+    - {{ host }}:9100
+{% endfor %}

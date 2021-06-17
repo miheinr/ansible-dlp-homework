@@ -1,0 +1,4 @@
+---
+- name: install prometheus server
+  include_role:
+    name: mesaguy.prometheus

@@ -1,0 +1,10 @@
+---
+prometheus_components:
+  - prometheus
+  - node_exporter
+prometheus_host: "127.0.0.1"
+prometheus_port: 10000
+prometheus_extra_opts:
+  - '--storage.tsdb.retention=90d'
+prometheus_server_cfg:
+  '{{ lookup("template", "../templates/prometheus_server.j2") | from_yaml }}'
