@@ -1,9 +1,46 @@
 ---
-- name: update
+- name: install epel
+  yum:
+    name: epel-release
+    state: present
+
+- name: enable epel
+  community.general.ini_file:
+    path: /etc/yum.repos.d/epel.repo
+    section: epel
+    option: enabled
+    value: "1"
+    mode: "0644"
+
+- name: enable powertools
+  community.general.ini_file:
+    path: /etc/yum.repos.d/CentOS-Linux-PowerTools.repo
+    section: powertools
+    option: enabled
+    value: "1"
+    mode: "0644"
+
+- name: yum update cache
+  yum:
+    update_cache: yes
+
+- name: update OS
   yum:
     name: "*"
     state: latest
-- name: fill template with ip
-  template:
-    src: file.j2
-    dest: /tmp/filled_file.txt
+
+# install moreutils for the tool "sponge"
+- name: install moreutils
+  yum:
+    name:
+      - moreutils
+    state: latest
+
+- name: set hostname resolution for Vagrant
+  lineinfile:
+    dest: /etc/hosts
+    regexp: ".*{{ item }}$"
+    line: "{{ hostvars[item].internal_ip }} {{item}}"
+    state: present
+  when: hostvars[item].internal_ip is defined
+  loop: "{{ groups['all'] }}"

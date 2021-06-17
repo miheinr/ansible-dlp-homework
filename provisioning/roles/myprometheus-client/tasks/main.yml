@@ -1,0 +1,35 @@
+---
+- name: install prometheus client
+  include_role:
+    name: mesaguy.prometheus
+
+- name: add firewalld zone for prometheus
+  firewalld:
+    zone: "{{ firewalld_prometheus_zone }}"
+    state: present
+    permanent: true
+  register: firewalld_zone_add
+
+# after adding zone firewalld has to be reloaded immediately
+- name: reload service firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+  when: firewalld_zone_add.changed
+
+- name: open firewalld zone for prometheus server
+  firewalld:
+    immediate: true
+    permanent: true
+    source: "{{ hostvars[item].internal_ip }}"
+    state: enabled
+    zone: "{{ firewalld_prometheus_zone }}"
+  loop: "{{ groups['servers'] }}"
+
+- name: open firewalld zone for node_exporter
+  firewalld:
+    immediate: true
+    port: 9100/tcp
+    permanent: true
+    state: enabled
+    zone: "{{ firewalld_prometheus_zone }}"

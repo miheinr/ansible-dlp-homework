@@ -1,0 +1,4 @@
+---
+prometheus_components:
+  - node_exporter
+firewalld_prometheus_zone: "prometheus"

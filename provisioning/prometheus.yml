@@ -1,0 +1,15 @@
+---
+- hosts: machine1
+  become: yes
+
+  vars:
+    prometheus_components:
+      - prometheus
+      - alertmanager
+      - blackbox_exporter
+      - node_exporter
+    prometheus_port: 10000
+    prometheus_extra_opts:
+     - '--storage.tsdb.retention=90d'
+  roles:
+    - mesaguy.prometheus

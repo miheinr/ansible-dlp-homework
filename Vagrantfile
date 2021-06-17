@@ -26,7 +26,7 @@ Vagrant.configure("2") do |config|
 
           # set groups for server and clients
           ansible.groups = {
-            "server" => ["machine1"],
+            "servers" => ["machine1"],
             "clients" => [],
           }
           (2..N).each do |i|
@@ -36,7 +36,7 @@ Vagrant.configure("2") do |config|
           # set internal ip address as inventory variable
           ansible.host_vars = {}
           (1..N).each do |i|
-            ansible.host_vars["machine#{i}"] = {"intip" => "192.168.77.#{20+i}"}
+            ansible.host_vars["machine#{i}"] = {"internal_ip" => "192.168.77.#{20+i}"}
           end
           ansible.playbook = "provisioning/playbook.yml"
         end

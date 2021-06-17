@@ -1,0 +1,6 @@
+---
+nginx_install_packages:
+- nginx
+- python3-passlib
+nginx_user: test
+nginx_passwd: test

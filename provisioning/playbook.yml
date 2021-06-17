@@ -1,6 +1,19 @@
 ---
-- hosts: all
+- name: install common tasks
+  hosts: all
   become: yes
-
   roles:
-  - common
+    - common
+
+- name: install prometheus server
+  hosts: servers
+  become: yes
+  roles:
+    - myprometheus-server
+    - nginx
+
+- name: install prometheus node_exporter
+  hosts: clients
+  become: yes
+  roles:
+    - myprometheus-client
