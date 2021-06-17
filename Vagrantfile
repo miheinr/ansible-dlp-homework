@@ -10,11 +10,15 @@ Vagrant.configure("2") do |config|
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "generic/centos8"
 
-  N = 2
+  N = 3
   (1..N).each do |machine_id|
     config.vm.define "machine#{machine_id}" do |machine|
       machine.vm.hostname = "machine#{machine_id}"
       machine.vm.network "private_network", ip: "192.168.77.#{20+machine_id}"
+
+      if machine_id == 1
+        machine.vm.network "forwarded_port", guest_ip:"127.0.0.1", guest: 80, host: 8080, auto_correct: true
+      end
 
       # Only execute once the Ansible provisioner,
       # when all the machines are up and ready.
