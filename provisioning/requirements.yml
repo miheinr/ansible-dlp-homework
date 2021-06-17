@@ -1,0 +1,6 @@
+---
+roles:
+  - mesaguy.prometheus
+
+collections:
+  - community.general

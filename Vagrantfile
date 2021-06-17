@@ -1,23 +1,21 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-# All Vagrant configuration is done below. The "2" in Vagrant.configure
-# configures the configuration version (we support older styles for
-# backwards compatibility). Please don't change it unless you know what
-# you're doing.
 Vagrant.configure("2") do |config|
-  # Every Vagrant development environment requires a box. You can search for
-  # boxes at https://vagrantcloud.com/search.
+
   config.vm.box = "generic/centos8"
 
+  # N is the number of machines (server and clients)
   N = 3
+  # the first machine will be the server
+
   (1..N).each do |machine_id|
     config.vm.define "machine#{machine_id}" do |machine|
       machine.vm.hostname = "machine#{machine_id}"
       machine.vm.network "private_network", ip: "192.168.77.#{20+machine_id}"
 
       if machine_id == 1
-        machine.vm.network "forwarded_port", guest_ip:"127.0.0.1", guest: 80, host: 8080, auto_correct: true
+        machine.vm.network "forwarded_port", host_ip:"127.0.0.1", guest: 80, host: 8080, auto_correct: true
       end
 
       # Only execute once the Ansible provisioner,
@@ -27,6 +25,13 @@ Vagrant.configure("2") do |config|
           # Disable default limit to connect to all the machines
           ansible.limit = "all"
           ansible.compatibility_mode = "2.0"
+
+          # If we specify the requirements file here then on every provisioning
+          # the roles and collections will be fetched again. This is not what
+          # we want.
+          # ansible.galaxy_role_file = "provisioning/requirements.yml"
+          # Instead use on the command line (once):
+          # ansible-galaxy install -r provisioning/requirements.yml
 
           # set groups for server and clients
           ansible.groups = {
@@ -47,16 +52,4 @@ Vagrant.configure("2") do |config|
       end
     end
   end
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine. In the example below,
-  # accessing "localhost:8080" will access port 80 on the guest machine.
-  # NOTE: This will enable public access to the opened port
-  # config.vm.network "forwarded_port", guest: 80, host: 8080
-
-  # Create a forwarded port mapping which allows access to a specific port
-  # within the machine from a port on the host machine and only allow access
-  # via 127.0.0.1 to disable public access
-  # config.vm.network "forwarded_port", guest: 80, host: 8080, host_ip: "127.0.0.1"
-
 end
