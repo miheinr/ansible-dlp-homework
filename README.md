@@ -23,6 +23,7 @@ This Vagrant setup and Ansible provisioning creates N virtual machines (N can be
 ## Provisioning
 
 ![](playbook-arch.png)
+
 `vagrant up` in the repo directory will spin up some VMs and create an internal network 192.168.77.0/24. Port 80 of machine1 will be port-forwarded from the host machine and port 8080 (http://127.0.0.1:8080).
 As soon as the the last machine has spinned up the provisioning via Ansible begins by automatically creating an inventory file in `.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`.
 The inventory file on my machine looks like
