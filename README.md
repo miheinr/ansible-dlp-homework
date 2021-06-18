@@ -6,13 +6,15 @@ This demo reproduces scenario 1 of the homework assignment (some type of central
 ## Architecture
 
 This Vagrant setup and Ansible provisioning creates N virtual machines (N can be configured in the Vagrantfile) and sets up the machines as follows:
-- `machine1`: Prometheus server and NGINX reverse-proxy. Prometheus can be accessed on the host machine via NGINX-proxy (and Vagrant port forwarding) on http://127.0.0.1:8080. The Prometheus server gets the metrics from the monitoring clients via http-access on the node_exporter on the clients.
+- `machine1`: Prometheus server and NGINX reverse-proxy. Prometheus can be accessed on the host machine via NGINX-reverse-proxy (and Vagrant port forwarding) on http://127.0.0.1:8080. I mainly use NGINX here for access control (user/password: test/test). The Prometheus server gets the metrics from the monitoring clients via http-access on the node_exporter on the clients.
 - `machine2...N`: Monitoring clients with the standard node_exporter on port 9100. Firewall rules allow access to the node_exporter URL only from `machine1`.
+
+![](network-arch.png)
 
 ## Preparations
 
 - install [Vagrant](https://www.vagrantup.com/)
-- install virtualization (e.g. Virtualbox on Linux, Parallels on Mac)
+- install virtualization (e.g. Virtualbox or kvm on Linux, Parallels on Mac)
 - install Ansible
 - clone this repo
 - install requirements for Ansible
@@ -20,6 +22,7 @@ This Vagrant setup and Ansible provisioning creates N virtual machines (N can be
 
 ## Provisioning
 
+![](playbook-arch.png)
 `vagrant up` in the repo directory will spin up some VMs and create an internal network 192.168.77.0/24. Port 80 of machine1 will be port-forwarded from the host machine and port 8080 (http://127.0.0.1:8080).
 As soon as the the last machine has spinned up the provisioning via Ansible begins by automatically creating an inventory file in `.vagrant/provisioners/ansible/inventory/vagrant_ansible_inventory`.
 The inventory file on my machine looks like
@@ -85,3 +88,8 @@ Besides some Ruby struggles in Vagrantfile I was faced with the following challe
   - create a new zone
   - activate this zone by reloading firewalld-service (firewalld-module does not offer this)
   - add source and port in two steps (one does not work)
+
+
+## Further Improvements
+- do not include nginx-password in role variable but use hash or secret in Ansible Tower
+- make all tasks independent of OS (here we need Centos8)
